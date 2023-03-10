@@ -1,0 +1,112 @@
+name: Test Set
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Test Set
+    steps:
+      # To use this repository's private action,
+      # you must check out the repository
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup
+        run: npm install
+
+      # basic simple test: just set this package's version
+      - name: Test functionality
+        run: |
+          node . set  --version '1.2.3'                 --package A.Dependency  testdata/testproj/testproj.csproj
+          echo "::set-output name=version::`node . get  --package A.Dependency  testdata/testproj/testproj.csproj`"
+        id: test
+      - name: Print results
+        run: echo ${{ steps.test.outputs.version }}
+
+      # simple test on fixed test data
+      - name: Test on simple format
+        run: |
+          node . set  --version '4.5.6'                 --package A.Dependency  testdata/simple/simple.csproj
+          echo "::set-output name=version::`node . get  --package A.Dependency  testdata/simple/simple.csproj`"
+        id: simple
+      - name: Print results
+        run: echo ${{ steps.simple.outputs.version }}
+      - name: Verify results
+        run: |
+          if [ "${{ steps.simple.outputs.version }}" == "4.5.6" ]; then
+            echo "Version matches"
+          else
+            echo "Version mismatch"
+            exit -1
+          fi
+
+      # simple test with custom regex on fixed test data
+      - name: Test on simple format with custom regex
+        run: |
+          node . set  --version '7.8.9'  --regex '^(?<major>[0-9]+)\.(?<minor>[0-9]+)\.(?<patch>[0-9]+)$'  --xpath '//ItemGroup/PackageReference[@Include="$1"]/@Version'  --package A.Dependency  testdata/simple/simple.csproj
+          echo "::set-output name=version::`node . get                                                     --xpath '//ItemGroup/PackageReference[@Include="$1"]/@Version'  --package A.Dependency  testdata/simple/simple.csproj`"
+        id: custom
+      - name: Print results
+        run: echo ${{ steps.custom.outputs.version }}
+      - name: Verify results
+        run: |
+          if [ "${{ steps.custom.outputs.version }}" == "7.8.9" ]; then
+            echo "Version matches"
+          else
+            echo "Version mismatch"
+            exit -1
+          fi
+
+      # prerelease test on fixed test data
+      - name: Test on prerelease format
+        run: |
+          node . set  --version '4.5.6-alpha.1'         --package A.Dependency  testdata/prerelease/prerelease.csproj
+          echo "::set-output name=version::`node . get  --package A.Dependency  testdata/prerelease/prerelease.csproj`"
+        id: prerelease
+      - name: Print results
+        run: echo ${{ steps.prerelease.outputs.version }}
+      - name: Verify results
+        run: |
+          if [ "${{ steps.prerelease.outputs.version }}" == "4.5.6-alpha.1" ]; then
+            echo "Version matches"
+          else
+            echo "Version mismatch"
+            exit -1
+          fi
+
+      # buildmeta test on fixed test data
+      - name: Test on buildmetadata format
+        run: |
+          node . set  --version '4.5.6+baz.56'          --package A.Dependency  testdata/buildmeta/buildmeta.csproj
+          echo "::set-output name=version::`node . get  --package A.Dependency  testdata/buildmeta/buildmeta.csproj`"
+        id: buildmeta
+      - name: Print results
+        run: echo ${{ steps.buildmeta.outputs.version }}
+      - name: Verify results
+        run: |
+          if [ "${{ steps.buildmeta.outputs.version }}" == "4.5.6+baz.56" ]; then
+            echo "Version matches"
+          else
+            echo "Version mismatch"
+            exit -1
+          fi
+
+      # complex test on fixed test data
+      - name: Test on complex format
+        run: |
+          node . set  --version '4.5.6-alpha.1+baz.56'  --package A.Dependency  testdata/complex/complex.csproj
+          echo "::set-output name=version::`node . get  --package A.Dependency  testdata/complex/complex.csproj`"
+        id: complex
+      - name: Print results
+        run: echo ${{ steps.complex.outputs.version }}
+      - name: Verify results
+        run: |
+          if [ "${{ steps.complex.outputs.version }}" == "4.5.6-alpha.1+baz.56" ]; then
+            echo "Version matches"
+          else
+            echo "Version mismatch"
+            exit -1
+          fi
