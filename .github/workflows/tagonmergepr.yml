@@ -19,7 +19,7 @@ jobs:
           token: ${{ secrets.COMMIT_TOKEN }}
       - uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 16
 
       - name: Configure git
         run: |
