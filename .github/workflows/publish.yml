@@ -1,0 +1,107 @@
+name: Publish package (NPM)
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
+    secrets:
+      NPM_TOKEN:
+        description: 'The NPM access token passed from the caller workflow'
+        required: true
+
+jobs:
+  release:
+    name: Release package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Update
+        run: |
+          git fetch --all
+          git pull
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Create package
+        id: pack
+        run: |
+          npm pack
+          echo "::set-output name=package::`ls *.tgz`"
+      - name: Show package
+        run: |
+          ls ${{ steps.pack.outputs.package }}
+          tar tvf ${{ steps.pack.outputs.package }}
+
+      - name: Create release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          draft: false
+          prerelease: false
+          release_name: Release ${{ inputs.tag }}
+          tag_name: ${{ inputs.tag }}
+          body_path: CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ github.TOKEN }}
+
+      - name: Upload release artifacts
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.pack.outputs.package }}
+          asset_name: ${{ steps.pack.outputs.package }}
+          asset_content_type: application/gzip
+
+
+##  publish-to-github-registry:
+##    needs: release
+##    runs-on: ubuntu-latest
+##    permissions:
+##      contents: read
+##      packages: write
+##    steps:
+##      - uses: actions/checkout@v2
+##      - uses: actions/setup-node@v2
+##        with:
+##          node-version: 14
+##          registry-url: https://npm.pkg.github.com/
+##          scope: '@kagekirin'
+
+##      - name: Publish to GitHub NPM Registry
+##        run: npm publish --access public --verbose
+##        env:
+##          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+
+##  publish-to-npmjs-registry:
+##    needs: release
+##    runs-on: ubuntu-latest
+##    permissions:
+##      contents: read
+##      packages: write
+##    steps:
+##      - uses: actions/checkout@v2
+##      - uses: actions/setup-node@v2
+##        with:
+##          node-version: 14
+##          registry-url: https://registry.npmjs.org/
+##          scope: '@kagekirin'
+
+##      - name: Patch package.json
+##        run: |
+##          sed -i -e "s|npm.pkg.github.com/@kagekirin|registry.npmjs.org|g" package.json
+##          cat package.json
+
+##      - name: Publish to NPM.JS Registry
+##        run: npm publish --access public --verbose
+##        env:
+##          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
