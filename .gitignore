@@ -1,0 +1,4 @@
+# .gitignore for csproj-dependency-version
+node_modules/
+**/obj/
+**/bin/
