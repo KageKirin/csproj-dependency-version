@@ -1,0 +1,4 @@
+#.npmignore for csproj-dependency-version
+
+.github/
+testdata/
