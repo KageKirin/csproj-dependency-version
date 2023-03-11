@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 16
 
       - name: Update
         run: |
@@ -40,26 +40,39 @@ jobs:
           tar tvf ${{ steps.pack.outputs.package }}
 
       - name: Create release
-        uses: actions/create-release@v1
+        uses: actions/github-script@v6
         id: create_release
+        #env:
+        #  GITHUB_TOKEN: ${{ github.TOKEN }}
         with:
-          draft: false
-          prerelease: false
-          release_name: Release ${{ inputs.tag }}
-          tag_name: ${{ inputs.tag }}
-          body_path: CHANGELOG.md
-        env:
-          GITHUB_TOKEN: ${{ github.TOKEN }}
+        #  github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const release = github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: ${{ inputs.tag }},
+              release_name: "Release ${{ inputs.tag }}",
+              prerelease: false,
+              draft: false,
+              body: '@CHANGELOG.md',
+            });
+            console.log(release);
+            return release;
 
-      - name: Upload release artifacts
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.pack.outputs.package }}
-          asset_name: ${{ steps.pack.outputs.package }}
-          asset_content_type: application/gzip
+      ##- name: Upload release artifacts
+      ##  uses: actions/github-script@v6
+      ##  env:
+      ##    GITHUB_TOKEN: ${{ github.TOKEN }}
+      ##  with:
+      ##    github-token: ${{secrets.GITHUB_TOKEN}}
+      ##    script: |
+      ##      const asset = github.rest.repos.uploadReleaseAsset({
+      ##        owner: context.repo.owner,
+      ##        repo: context.repo.repo,
+      ##        release_id: context.steps.create_release.outputs.id,
+      ##        name: context.steps.pack.outputs.package,
+      ##        data: context.steps.pack.outputs.package,
+      ##      });
 
 
 ##  publish-to-github-registry:
@@ -72,7 +85,7 @@ jobs:
 ##      - uses: actions/checkout@v2
 ##      - uses: actions/setup-node@v2
 ##        with:
-##          node-version: 14
+##          node-version: 16
 ##          registry-url: https://npm.pkg.github.com/
 ##          scope: '@kagekirin'
 
@@ -92,7 +105,7 @@ jobs:
 ##      - uses: actions/checkout@v2
 ##      - uses: actions/setup-node@v2
 ##        with:
-##          node-version: 14
+##          node-version: 16
 ##          registry-url: https://registry.npmjs.org/
 ##          scope: '@kagekirin'
 
