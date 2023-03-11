@@ -12,7 +12,7 @@ on:
 
 jobs:
   release:
-    uses: kagekirin/csproj-version/.github/workflows/publish.yml@main
+    uses: kagekirin/csproj-dependency-version/.github/workflows/publish.yml@main
     with:
       tag: ${{ github.event.inputs.tag }}
     secrets:
