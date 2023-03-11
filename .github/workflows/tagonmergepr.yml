@@ -64,7 +64,7 @@ jobs:
 
   release:
     needs: bump
-    uses: kagekirin/csproj-version/.github/workflows/publish.yml@main
+    uses: kagekirin/csproj-dependency-version/.github/workflows/publish.yml@main
     with:
       tag: ${{ needs.bump.outputs.version }}
     secrets:
