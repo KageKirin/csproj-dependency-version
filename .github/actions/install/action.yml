@@ -1,0 +1,13 @@
+name: Install csproj-dependency-version
+runs:
+  using: composite
+  steps:
+  - name: Install
+    shell: bash
+    run: |-
+      npm install -g https://github.com/kagekirin/csproj-dependency-version/tarball/main
+  - name: Verify installation
+    shell: bash
+    run: |-
+      which csproj-dependency-version
+      csproj-dependency-version --version
