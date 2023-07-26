@@ -1,0 +1,21 @@
+name: Get project dependency version
+inputs:
+  file:
+    description: path to .csproj
+    required: true
+  dependency:
+    description: dependency name
+    required: true
+outputs:
+  version:
+    description: version of ${{ inputs.dependency }} retrieved from ${{ inputs.file }}
+    value: ${{ steps.get.outputs.value }}
+runs:
+  using: composite
+  steps:
+  - id: get
+    name: Get dependency ${{ inputs.dependency }} version from ${{ inputs.file }}
+    shell: bash
+    run: |-
+      csproj-dependency-version get --package ${{ inputs.dependency }} ${{ inputs.file }}
+      echo "value=$(csproj-dependency-version get --package ${{ inputs.dependency }} ${{ inputs.file }})" >> $GITHUB_OUTPUT
