@@ -9,7 +9,7 @@ inputs:
 outputs:
   version:
     description: version of inputs.dependency retrieved from inputs.file
-    value: ${{ steps.get.outputs.value }}
+    value: ${{ steps.get.outputs.version }}
 runs:
   using: composite
   steps:
@@ -18,4 +18,4 @@ runs:
     shell: bash
     run: |-
       csproj-dependency-version get --package ${{ inputs.dependency }} ${{ inputs.file }}
-      echo "value=$(csproj-dependency-version get --package ${{ inputs.dependency }} ${{ inputs.file }})" >> $GITHUB_OUTPUT
+      echo "version=$(csproj-dependency-version get --package ${{ inputs.dependency }} ${{ inputs.file }})" >> $GITHUB_OUTPUT
