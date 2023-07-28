@@ -1,24 +1,24 @@
-name: Set project dependency version
+name: Set project package version
 inputs:
   file:
     description: path to .csproj
     required: true
-  dependency:
-    description: dependency name
+  package:
+    description: package name
     required: true
   version:
     description: version in SemVer format
     required: true
 outputs:
   version:
-    description: version of ${{ inputs.dependency }} set to ${{ inputs.file }}
+    description: version of ${{ inputs.package }} set to ${{ inputs.file }}
     value: ${{ steps.set.outputs.value }}
 runs:
   using: composite
   steps:
   - id: set
-    name: Set dependency ${{ inputs.dependency }} version to ${{ inputs.file }}
+    name: Set package ${{ inputs.package }} version to ${{ inputs.file }}
     shell: bash
     run: |-
-      csproj-dependency-version set --version  ${{ inputs.version }} --package ${{ inputs.dependency }} ${{ inputs.file }}
-      echo "value=$(csproj-dependency-version get --package ${{ inputs.dependency }} ${{ inputs.file }})" >> $GITHUB_OUTPUT
+      csproj-dependency-version set --version  ${{ inputs.version }} --package ${{ inputs.package }} ${{ inputs.file }}
+      echo "value=$(csproj-dependency-version get --package ${{ inputs.package }} ${{ inputs.file }})" >> $GITHUB_OUTPUT
