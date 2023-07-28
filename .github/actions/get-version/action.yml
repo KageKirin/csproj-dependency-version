@@ -19,3 +19,6 @@ runs:
     run: |-
       csproj-dependency-version get --package ${{ inputs.dependency }} ${{ inputs.file }}
       echo "version=$(csproj-dependency-version get --package ${{ inputs.dependency }} ${{ inputs.file }})" >> $GITHUB_OUTPUT
+  - shell: bash
+    run: |-
+      echo ${{ steps.get.outputs.version }}
