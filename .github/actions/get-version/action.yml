@@ -6,6 +6,10 @@ inputs:
   package:
     description: package name
     required: true
+  xpath:
+    description: XPath to version element
+    required: false
+    default: '//ItemGroup/PackageReference[@Include="\$1"]/@Version'
 outputs:
   version:
     description: version of inputs.package retrieved from inputs.file
@@ -17,8 +21,8 @@ runs:
     name: Get package ${{ inputs.package }} version from ${{ inputs.file }}
     shell: bash
     run: |-
-      csproj-dependency-version get --package ${{ inputs.package }} ${{ inputs.file }}
-      echo "version=$(csproj-dependency-version get --package ${{ inputs.package }} ${{ inputs.file }})" >> $GITHUB_OUTPUT
+      csproj-dependency-version get --package ${{ inputs.package }} --xpath ${{ inputs.xpath }} ${{ inputs.file }}
+      echo "version=$(csproj-dependency-version get --package ${{ inputs.package }} --xpath ${{ inputs.xpath }} ${{ inputs.file }})" >> $GITHUB_OUTPUT
   - shell: bash
     run: |-
       echo ${{ steps.get.outputs.version }}
