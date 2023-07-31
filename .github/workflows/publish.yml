@@ -33,7 +33,7 @@ jobs:
         id: pack
         run: |
           npm pack
-          echo "::set-output name=package::`ls *.tgz`"
+          echo "package=$(ls *.tgz)" >> $GITHUB_OUTPUT
       - name: Show package
         run: |
           ls ${{ steps.pack.outputs.package }}

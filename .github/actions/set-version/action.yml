@@ -12,14 +12,14 @@ inputs:
   xpath:
     description: XPath to version element
     required: false
-    default: '//ItemGroup/PackageReference[@Include="\$1"]/@Version'
+    default: '//ItemGroup/PackageReference[@Include="$1"]/@Version'
   regex:
     description: ECMAScript Regular Expression to parse the version string for verification
     required: false
-    default: '^(?<major>0|[1-9]\\d*)\\.(?<minor>0|[1-9]\\d*)(\\.(?<patch>0|[1-9]\\d*))?(?:-(?<prerelease>(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+(?<buildmetadata>[0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$'
+    default: "^(?<major>0|[1-9]\\d*)\\.(?<minor>0|[1-9]\\d*)(\\.(?<patch>0|[1-9]\\d*))?(?:-(?<prerelease>(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+(?<buildmetadata>[0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
 outputs:
   version:
-    description: version of ${{ inputs.package }} set to ${{ inputs.file }}
+    description: version of inputs.package set to inputs.file
     value: ${{ steps.set.outputs.value }}
 runs:
   using: composite
@@ -28,5 +28,5 @@ runs:
     name: Set package ${{ inputs.package }} version to ${{ inputs.file }}
     shell: bash
     run: |-
-      csproj-dependency-version set --version ${{ inputs.version }} --package ${{ inputs.package }} --xpath ${{ inputs.xpath }} --regex ${{ inputs.regex }} ${{ inputs.file }}
-      echo "value=$(csproj-dependency-version set --version ${{ inputs.version }} --package ${{ inputs.package }} --xpath ${{ inputs.xpath }} --regex ${{ inputs.regex }} ${{ inputs.file }})" >> $GITHUB_OUTPUT
+      csproj-dependency-version set --version '${{ inputs.version }}' --package '${{ inputs.package }}' --xpath '${{ inputs.xpath }}' --regex '${{ inputs.regex }}' '${{ inputs.file }}'
+      echo "value=$(csproj-dependency-version set --version '${{ inputs.version }}' --package '${{ inputs.package }}' --xpath '${{ inputs.xpath }}' --regex '${{ inputs.regex }}' '${{ inputs.file }}')" >> $GITHUB_OUTPUT

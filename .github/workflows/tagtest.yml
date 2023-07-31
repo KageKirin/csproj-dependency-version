@@ -30,8 +30,8 @@ jobs:
         run: |
           git fetch --tags
           git tag -l --sort v:refname | tail -n 1
-          echo "latest_tag=`git tag -l --sort v:refname | tail -n 1`"
-          echo "latest_tag=`git tag -l --sort v:refname | tail -n 1`" >> $GITHUB_ENV
+          echo "latest_tag=$(git tag -l --sort v:refname | tail -n 1)"
+          echo "latest_tag=$(git tag -l --sort v:refname | tail -n 1)" >> $GITHUB_ENV
 
       - name: Verify latest_tag in env
         run: echo "${{ env.latest_tag }}"
