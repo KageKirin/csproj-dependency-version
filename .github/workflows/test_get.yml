@@ -21,7 +21,7 @@ jobs:
       # basic simple test: just print current this package's version
       - name: Test functionality
         run: |
-          version=$(node . get                                    --package A.Dependency  testdata/testproj/testproj.csproj)
+          version=$(node . get  --package A.Dependency  testdata/testproj/testproj.csproj)
           echo ${version}
           echo "version=${version}" >> $GITHUB_OUTPUT
         id: test
@@ -31,7 +31,7 @@ jobs:
       # simple test on fixed test data
       - name: Test on simple format
         run: |
-          version=$(node . get                                    --package A.Dependency  testdata/simple/simple.csproj)
+          version=$(node . get  --package A.Dependency  testdata/simple/simple.csproj)
           echo ${version}
           echo "version=${version}" >> $GITHUB_OUTPUT
         id: simple
@@ -49,7 +49,7 @@ jobs:
       # simple test with custom regex on fixed test data
       - name: Test on simple format with custom regex
         run: |
-          version=$(node . get                                    --package A.Dependency  --regex '^(?<major>[0-9]+)\.(?<minor>[0-9]+)\.(?<patch>[0-9]+)$'  --xpath '//ItemGroup/PackageReference[@Include="$1"]/@Version'    testdata/simple/simple.csproj)
+          version=$(node . get  --package A.Dependency  --regex '^(?<major>[0-9]+)\.(?<minor>[0-9]+)\.(?<patch>[0-9]+)$'  --xpath '//ItemGroup/PackageReference[@Include="$1"]/@Version'    testdata/simple/simple.csproj)
           echo ${version}
           echo "version=${version}" >> $GITHUB_OUTPUT
         id: custom
@@ -67,7 +67,7 @@ jobs:
       # prerelease test on fixed test data
       - name: Test on prerelease format
         run: |
-          version=$(node . get                                    --package A.Dependency  testdata/prerelease/prerelease.csproj)
+          version=$(node . get  --package A.Dependency  testdata/prerelease/prerelease.csproj)
           echo ${version}
           echo "version=${version}" >> $GITHUB_OUTPUT
         id: prerelease
@@ -85,7 +85,7 @@ jobs:
       # buildmeta test on fixed test data
       - name: Test on buildmetadata format
         run: |
-          version=$(node . get                                    --package A.Dependency  testdata/buildmeta/buildmeta.csproj)
+          version=$(node . get  --package A.Dependency  testdata/buildmeta/buildmeta.csproj)
           echo ${version}
           echo "version=${version}" >> $GITHUB_OUTPUT
         id: buildmeta
@@ -103,7 +103,7 @@ jobs:
       # complex test on fixed test data
       - name: Test on complex format
         run: |
-          version=$(node . get                                    --package A.Dependency  testdata/complex/complex.csproj)
+          version=$(node . get  --package A.Dependency  testdata/complex/complex.csproj)
           echo ${version}
           echo "version=${version}" >> $GITHUB_OUTPUT
         id: complex

@@ -20,7 +20,7 @@ jobs:
       # basic simple test: just set this package's version
       - name: Test functionality
         run: |
-          version=$(node . set  --version '1.2.3'                 --package A.Dependency  testdata/testproj/testproj.csproj)
+          version=$(node . set  --version '1.2.3'  --package A.Dependency  testdata/testproj/testproj.csproj)
           echo ${version}
           echo "version=${version}" >> $GITHUB_OUTPUT
         id: test
@@ -30,7 +30,7 @@ jobs:
       # simple test on fixed test data
       - name: Test on simple format
         run: |
-          version=$(node . set  --version '4.5.6'                 --package A.Dependency  testdata/simple/simple.csproj)
+          version=$(node . set  --version '4.5.6'  --package A.Dependency  testdata/simple/simple.csproj)
           echo ${version}
           echo "version=${version}" >> $GITHUB_OUTPUT
         id: simple
@@ -66,7 +66,7 @@ jobs:
       # prerelease test on fixed test data
       - name: Test on prerelease format
         run: |
-          version=$(node . set  --version '4.5.6-alpha.1'         --package A.Dependency  testdata/prerelease/prerelease.csproj)
+          version=$(node . set  --version '4.5.6-alpha.1'  --package A.Dependency  testdata/prerelease/prerelease.csproj)
           echo ${version}
           echo "version=${version}" >> $GITHUB_OUTPUT
         id: prerelease
@@ -84,7 +84,7 @@ jobs:
       # buildmeta test on fixed test data
       - name: Test on buildmetadata format
         run: |
-          version=$(node . set  --version '4.5.6+baz.56'          --package A.Dependency  testdata/buildmeta/buildmeta.csproj)
+          version=$(node . set  --version '4.5.6+baz.56'  --package A.Dependency  testdata/buildmeta/buildmeta.csproj)
           echo ${version}
           echo "version=${version}" >> $GITHUB_OUTPUT
         id: buildmeta
