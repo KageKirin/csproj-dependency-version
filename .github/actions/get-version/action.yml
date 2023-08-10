@@ -25,8 +25,9 @@ runs:
     name: Get package ${{ inputs.package }} version from ${{ inputs.file }}
     shell: bash
     run: |-
-      csproj-dependency-version get --package '${{ inputs.package }}' --xpath '${{ inputs.xpath }}' --regex '${{ inputs.regex }}' '${{ inputs.file }}'
-      echo "version=$(csproj-dependency-version get --package '${{ inputs.package }}' --xpath '${{ inputs.xpath }}' --regex '${{ inputs.regex }}' '${{ inputs.file }}')" >> $GITHUB_OUTPUT
+      version=$(csproj-dependency-version get --package '${{ inputs.package }}' --xpath '${{ inputs.xpath }}' --regex '${{ inputs.regex }}' '${{ inputs.file }}')
+      echo ${version}
+      echo "version=${version}" >> $GITHUB_OUTPUT
   - shell: bash
     run: |-
       echo ${{ steps.get.outputs.version }}
