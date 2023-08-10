@@ -1,0 +1,237 @@
+name: Test Compare
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Test Compare
+    steps:
+      # To use this repository's private action,
+      # you must check out the repository
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup
+        run: npm install
+
+      # basic simple test: just compare this package's version
+      - name: Test functionality
+        run: |
+          result=$(node . cmp --version '1.2.3'  --package A.Dependency  testdata/testproj/testproj.csproj)
+          echo "${result}"
+          echo "result=${result}" >> $GITHUB_OUTPUT
+        id: test
+      - name: Print results
+        run: echo ${{ steps.test.outputs.result }}
+
+      # simple test on fixed test data
+      - name: Test on simple format
+        run: |
+          result=$(node . cmp --version '1.2.3'  --package A.Dependency  testdata/simple/simple.csproj)
+          echo "${result}"
+          echo "result=${result}" >> $GITHUB_OUTPUT
+        id: simple
+      - name: Print results
+        run: echo ${{ steps.simple.outputs.result }}
+      - name: Verify results
+        run: |
+          if [ "${{ steps.simple.outputs.result }}" == "0" ]; then
+            echo "Version matches"
+          else
+            echo "Version mismatch"
+            exit -1
+          fi
+
+      # simple test with custom regex on fixed test data
+      - name: Test on simple format with custom regex
+        run: |
+          result=$(node . cmp --version '7.8.9'  --regex '^(?<major>[0-9]+)\.(?<minor>[0-9]+)\.(?<patch>[0-9]+)$'  --xpath '//ItemGroup/PackageReference[@Include="$1"]/@Version'  --package A.Dependency  testdata/simple/simple.csproj)
+          echo "${result}"
+          echo "result=${result}" >> $GITHUB_OUTPUT
+        id: custom
+      - name: Print results
+        run: echo ${{ steps.custom.outputs.result }}
+      - name: Verify results
+        run: |
+          if [ "${{ steps.custom.outputs.result }}" == "1" ]; then
+            echo "Version is greater"
+          else
+            echo "Version mismatch"
+            exit -1
+          fi
+
+      # prerelease test on fixed test data
+      - name: Test on prerelease format
+        run: |
+          result=$(node . cmp --version '1.2.3-alpha.5'  --package A.Dependency  testdata/prerelease/prerelease.csproj)
+          echo "${result}"
+          echo "result=${result}" >> $GITHUB_OUTPUT
+        id: prerelease
+      - name: Print results
+        run: echo ${{ steps.prerelease.outputs.result }}
+      - name: Verify results
+        run: |
+          if [ "${{ steps.prerelease.outputs.result }}" == "-1" ]; then
+            echo "Version is lesser"
+          else
+            echo "Version mismatch"
+            exit -1
+          fi
+
+      # buildmeta test on fixed test data
+      - name: Test on buildmetadata format
+        run: |
+          result=$(node . cmp --version '1.2.3+foobaz.42'  --package A.Dependency  testdata/buildmeta/buildmeta.csproj)
+          echo "${result}"
+          echo "result=${result}" >> $GITHUB_OUTPUT
+        id: buildmeta
+      - name: Print results
+        run: echo ${{ steps.buildmeta.outputs.result }}
+      - name: Verify results
+        run: |
+          if [ "${{ steps.buildmeta.outputs.result }}" == "1" ]; then
+            echo "Version is greater"
+          else
+            echo "Version mismatch"
+            exit -1
+          fi
+
+      # complex test on fixed test data
+      - name: Test on complex format
+        run: |
+          result=$(node . cmp --version '1.2.3-alpha.1+foobaz.56'  --package A.Dependency  testdata/complex/complex.csproj)
+          echo "${result}"
+          echo "result=${result}" >> $GITHUB_OUTPUT
+        id: complex
+      - name: Print results
+        run: echo ${{ steps.complex.outputs.result }}
+      - name: Verify results
+        run: |
+          if [ "${{ steps.complex.outputs.result }}" == "-1" ]; then
+            echo "Version is lesser"
+          else
+            echo "Version mismatch"
+            exit -1
+          fi
+
+  test-action:
+    runs-on: ubuntu-latest
+    name: Test Compare Action
+    steps:
+      # To use this repository's private action,
+      # you must check out the repository
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup
+        uses: ./.github/actions/install
+
+      # basic simple test: just set this package's version
+      - name: Test functionality
+        uses: ./.github/actions/compare-version
+        with:
+          version: '1.2.3'
+          package: A.Dependency
+          file: testdata/testproj/testproj.csproj
+        id: test
+      - name: Print results
+        run: echo ${{ steps.test.outputs.result }}
+
+      # simple test on fixed test data
+      - name: Test on simple format
+        uses: ./.github/actions/compare-version
+        with:
+          version: '1.2.3'
+          package: A.Dependency
+          file: testdata/simple/simple.csproj
+        id: simple
+      - name: Print results
+        run: echo ${{ steps.simple.outputs.result }}
+      - name: Verify results
+        run: |
+          if [ "${{ steps.simple.outputs.result }}" == "0" ]; then
+            echo "Version matches"
+          else
+            echo "Version mismatch"
+            exit -1
+          fi
+
+      # simple test with custom regex on fixed test data
+      - name: Test on simple format with custom regex
+        uses: ./.github/actions/compare-version
+        with:
+          version: '7.8.9'
+          regex: '^(?<major>[0-9]+)\.(?<minor>[0-9]+)\.(?<patch>[0-9]+)$'
+          xpath: '//ItemGroup/PackageReference[@Include="$1"]/@Version'
+          package: A.Dependency
+          file: testdata/simple/simple.csproj
+        id: custom
+      - name: Print results
+        run: echo ${{ steps.custom.outputs.result }}
+      - name: Verify results
+        run: |
+          if [ "${{ steps.custom.outputs.result }}" == "1" ]; then
+            echo "Version is greater"
+          else
+            echo "Version mismatch"
+            exit -1
+          fi
+
+      # prerelease test on fixed test data
+      - name: Test on prerelease format
+        uses: ./.github/actions/compare-version
+        with:
+          version: '1.2.3-alpha.5'
+          package: A.Dependency
+          file: testdata/prerelease/prerelease.csproj
+        id: prerelease
+      - name: Print results
+        run: echo ${{ steps.prerelease.outputs.result }}
+      - name: Verify results
+        run: |
+          if [ "${{ steps.prerelease.outputs.result }}" == "-1" ]; then
+            echo "Version is lesser"
+          else
+            echo "Version mismatch"
+            exit -1
+          fi
+
+      # buildmeta test on fixed test data
+      - name: Test on buildmetadata format
+        uses: ./.github/actions/compare-version
+        with:
+          version: '1.2.3+foobaz.42'
+          package: A.Dependency
+          file: testdata/buildmeta/buildmeta.csproj
+        id: buildmeta
+      - name: Print results
+        run: echo ${{ steps.buildmeta.outputs.result }}
+      - name: Verify results
+        run: |
+          if [ "${{ steps.buildmeta.outputs.result }}" == "1" ]; then
+            echo "Version is greater"
+          else
+            echo "Version mismatch"
+            exit -1
+          fi
+
+      # complex test on fixed test data
+      - name: Test on complex format
+        uses: ./.github/actions/compare-version
+        with:
+          version: '1.2.3-alpha.1+foobaz.56'
+          package: A.Dependency
+          file: testdata/complex/complex.csproj
+        id: complex
+      - name: Print results
+        run: echo ${{ steps.complex.outputs.result }}
+      - name: Verify results
+        run: |
+          if [ "${{ steps.complex.outputs.result }}" == "-1" ]; then
+            echo "Version is lesser"
+          else
+            echo "Version mismatch"
+            exit -1
+          fi
