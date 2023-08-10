@@ -21,8 +21,9 @@ jobs:
       # basic simple test: just print current this package's version
       - name: Test functionality
         run: |
-          node . get                                    --package A.Dependency  testdata/testproj/testproj.csproj
-          echo "version=$(node . get  --package A.Dependency  testdata/testproj/testproj.csproj)" >> $GITHUB_OUTPUT
+          version=$(node . get                                    --package A.Dependency  testdata/testproj/testproj.csproj)
+          echo ${version}
+          echo "version=${version}" >> $GITHUB_OUTPUT
         id: test
       - name: Print results
         run: echo ${{ steps.test.outputs.version }}
@@ -30,8 +31,9 @@ jobs:
       # simple test on fixed test data
       - name: Test on simple format
         run: |
-          node . get                                    --package A.Dependency  testdata/simple/simple.csproj
-          echo "version=$(node . get  --package A.Dependency  testdata/simple/simple.csproj)" >> $GITHUB_OUTPUT
+          version=$(node . get                                    --package A.Dependency  testdata/simple/simple.csproj)
+          echo ${version}
+          echo "version=${version}" >> $GITHUB_OUTPUT
         id: simple
       - name: Print results
         run: echo ${{ steps.simple.outputs.version }}
@@ -47,8 +49,9 @@ jobs:
       # simple test with custom regex on fixed test data
       - name: Test on simple format with custom regex
         run: |
-          node . get                                    --package A.Dependency  --regex '^(?<major>[0-9]+)\.(?<minor>[0-9]+)\.(?<patch>[0-9]+)$'  --xpath '//ItemGroup/PackageReference[@Include="$1"]/@Version'    testdata/simple/simple.csproj
-          echo "version=$(node . get  --package A.Dependency  --regex '^(?<major>[0-9]+)\.(?<minor>[0-9]+)\.(?<patch>[0-9]+)$'  --xpath '//ItemGroup/PackageReference[@Include="$1"]/@Version'    testdata/simple/simple.csproj)" >> $GITHUB_OUTPUT
+          version=$(node . get                                    --package A.Dependency  --regex '^(?<major>[0-9]+)\.(?<minor>[0-9]+)\.(?<patch>[0-9]+)$'  --xpath '//ItemGroup/PackageReference[@Include="$1"]/@Version'    testdata/simple/simple.csproj)
+          echo ${version}
+          echo "version=${version}" >> $GITHUB_OUTPUT
         id: custom
       - name: Print results
         run: echo ${{ steps.custom.outputs.version }}
@@ -64,8 +67,9 @@ jobs:
       # prerelease test on fixed test data
       - name: Test on prerelease format
         run: |
-          node . get                                    --package A.Dependency  testdata/prerelease/prerelease.csproj
-          echo "version=$(node . get  --package A.Dependency  testdata/prerelease/prerelease.csproj)" >> $GITHUB_OUTPUT
+          version=$(node . get                                    --package A.Dependency  testdata/prerelease/prerelease.csproj)
+          echo ${version}
+          echo "version=${version}" >> $GITHUB_OUTPUT
         id: prerelease
       - name: Print results
         run: echo ${{ steps.prerelease.outputs.version }}
@@ -81,8 +85,9 @@ jobs:
       # buildmeta test on fixed test data
       - name: Test on buildmetadata format
         run: |
-          node . get                                    --package A.Dependency  testdata/buildmeta/buildmeta.csproj
-          echo "version=$(node . get  --package A.Dependency  testdata/buildmeta/buildmeta.csproj)" >> $GITHUB_OUTPUT
+          version=$(node . get                                    --package A.Dependency  testdata/buildmeta/buildmeta.csproj)
+          echo ${version}
+          echo "version=${version}" >> $GITHUB_OUTPUT
         id: buildmeta
       - name: Print results
         run: echo ${{ steps.buildmeta.outputs.version }}
@@ -98,8 +103,9 @@ jobs:
       # complex test on fixed test data
       - name: Test on complex format
         run: |
-          node . get                                    --package A.Dependency  testdata/complex/complex.csproj
-          echo "version=$(node . get  --package A.Dependency  testdata/complex/complex.csproj)" >> $GITHUB_OUTPUT
+          version=$(node . get                                    --package A.Dependency  testdata/complex/complex.csproj)
+          echo ${version}
+          echo "version=${version}" >> $GITHUB_OUTPUT
         id: complex
       - name: Print results
         run: echo ${{ steps.complex.outputs.version }}
