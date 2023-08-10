@@ -20,7 +20,7 @@ inputs:
 outputs:
   version:
     description: version of inputs.package set to inputs.file
-    value: ${{ steps.set.outputs.value }}
+    value: ${{ steps.set.outputs.version }}
 runs:
   using: composite
   steps:
@@ -28,5 +28,6 @@ runs:
     name: Set package ${{ inputs.package }} version to ${{ inputs.file }}
     shell: bash
     run: |-
-      csproj-dependency-version set --version '${{ inputs.version }}' --package '${{ inputs.package }}' --xpath '${{ inputs.xpath }}' --regex '${{ inputs.regex }}' '${{ inputs.file }}'
-      echo "value=$(csproj-dependency-version set --version '${{ inputs.version }}' --package '${{ inputs.package }}' --xpath '${{ inputs.xpath }}' --regex '${{ inputs.regex }}' '${{ inputs.file }}')" >> $GITHUB_OUTPUT
+      version=$(csproj-dependency-version set --version '${{ inputs.version }}' --package '${{ inputs.package }}' --xpath '${{ inputs.xpath }}' --regex '${{ inputs.regex }}' '${{ inputs.file }}')
+      echo ${version}
+      echo "version=${version}" >> $GITHUB_OUTPUT
