@@ -30,4 +30,4 @@ runs:
     run: |-
       result=$(csproj-dependency-version cmp --version '${{ inputs.version }}' --package '${{ inputs.package }}' --xpath '${{ inputs.xpath }}' --regex '${{ inputs.regex }}' '${{ inputs.file }}')
       echo ${result}
-      echo "version=${result}" >> $GITHUB_OUTPUT
+      echo "result=${result}" >> $GITHUB_OUTPUT
