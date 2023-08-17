@@ -89,26 +89,28 @@ function get_version()
 {
     try
     {
-        const doc = read_csproj(args.files);
-        const verAttribute = get_csproj_package_version(doc);
-        if (verAttribute)
-        {
-            const ver = parse_version(verAttribute.value);
-            if (ver)
+        args.files.forEach((file) => {
+            const doc = read_csproj(file);
+            const verAttribute = get_csproj_package_version(doc);
+            if (verAttribute)
             {
-                console.log(verAttribute.value);
+                const ver = parse_version(verAttribute.value);
+                if (ver)
+                {
+                    console.log(verAttribute.value);
+                }
+                else
+                {
+                    console.error("failed to parse .csproj package reference version");
+                    return 1;
+                }
             }
             else
             {
-                console.error("failed to parse .csproj package reference version");
+                console.error("invalid .csproj does not contain package reference version");
                 return 1;
             }
-        }
-        else
-        {
-            console.error("invalid .csproj does not contain package reference version");
-            return 1;
-        }
+        })
     }
     catch (error)
     {
