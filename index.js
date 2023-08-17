@@ -194,85 +194,87 @@ function bump_version()
 {
     try
     {
-        const doc = read_csproj(args.files);
-        const verAttribute = get_csproj_package_version(doc);
-        if (verAttribute)
-        {
-            const ver = parse_version(verAttribute.value);
-            if (ver)
+        args.files.forEach((file) => {
+            const doc = read_csproj(file);
+            const verAttribute = get_csproj_package_version(doc);
+            if (verAttribute)
             {
-                let [major, minor, patch, prerelease, buildmetadata] = ver;
-                // console.dir({ver});
-                // console.dir({major, minor, patch, prerelease, buildmetadata});
+                const ver = parse_version(verAttribute.value);
+                if (ver)
+                {
+                    let [major, minor, patch, prerelease, buildmetadata] = ver;
+                    // console.dir({ver});
+                    // console.dir({major, minor, patch, prerelease, buildmetadata});
 
-                if (args.major)
-                {
-                    major++;
-                }
-                if (args.minor)
-                {
-                    minor++;
-                }
-                if (args.patch)
-                {
-                    patch++;
-                }
-                verAttribute.value = `${major}.${minor}.${patch}`;
+                    if (args.major)
+                    {
+                        major++;
+                    }
+                    if (args.minor)
+                    {
+                        minor++;
+                    }
+                    if (args.patch)
+                    {
+                        patch++;
+                    }
+                    verAttribute.value = `${major}.${minor}.${patch}`;
 
-                if (prerelease)
-                {
-                    verAttribute.value += `-${prerelease}`;
-                }
-                if (buildmetadata)
-                {
-                    verAttribute.value += `+${buildmetadata}`;
-                }
+                    if (prerelease)
+                    {
+                        verAttribute.value += `-${prerelease}`;
+                    }
+                    if (buildmetadata)
+                    {
+                        verAttribute.value += `+${buildmetadata}`;
+                    }
 
-                write_csproj(args.files, doc);
+                    write_csproj(file, doc);
+                }
+                else
+                {
+                    console.error("failed to parse .csproj package reference version");
+                    return 1;
+                }
             }
             else
             {
-                console.error("failed to parse .csproj package reference version");
-                return 1;
-            }
-        }
-        else
-        {
-            console.error("invalid .csproj does not contain package reference version");
-            return 1;
-        }
-
-        // read back
-        const doc2 = read_csproj(args.files);
-        const verAttribute2 = get_csproj_package_version(doc2);
-        if (verAttribute2)
-        {
-            const ver = parse_version(verAttribute2.value);
-            if (ver)
-            {
-                console.log(verAttribute2.value);
-            }
-            else
-            {
-                console.error("failed to parse .csproj package reference version at read back");
+                console.error("invalid .csproj does not contain package reference version");
                 return 1;
             }
 
-            if (verAttribute2.value === verAttribute.value)
+            // read back
+            const doc2 = read_csproj(file);
+            const verAttribute2 = get_csproj_package_version(doc2);
+            if (verAttribute2)
             {
-                // no issues
+                const ver = parse_version(verAttribute2.value);
+                if (ver)
+                {
+                    console.log(verAttribute2.value);
+                }
+                else
+                {
+                    console.error("failed to parse .csproj package reference version at read back");
+                    return 1;
+                }
+
+                if (verAttribute2.value === verAttribute.value)
+                {
+                    // no issues
+                }
+                else
+                {
+                    console.error("readback version different from input version");
+                    return 1;
+                }
             }
             else
             {
-                console.error("readback version different from input version");
+                console.error("invalid .csproj does not contain package reference version at read back");
                 return 1;
             }
-        }
-        else
-        {
-            console.error("invalid .csproj does not contain package reference version at read back");
-            return 1;
-        }
+        })
     }
     catch (error)
     {
