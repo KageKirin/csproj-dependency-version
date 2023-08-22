@@ -87,9 +87,9 @@ run();
 
 function get_version()
 {
-    try
-    {
-        args.files.forEach((file) => {
+    args.files.forEach((file) => {
+        try
+        {
             const doc = read_csproj(file);
             const verAttribute = get_csproj_package_version(doc);
             if (verAttribute)
@@ -110,13 +110,13 @@ function get_version()
                 console.error("invalid .csproj does not contain package reference version");
                 return 1;
             }
-        })
-    }
-    catch (error)
-    {
-        console.error(error.message);
-        return 1;
-    }
+        }
+        catch (error)
+        {
+            console.error(error.message);
+            return 1;
+        }
+    })
 
     return 0;
 }
